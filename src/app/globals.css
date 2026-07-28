@@ -1,26 +1,327 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
+
+/* ==========================================================================
+   HMS Frontend — Design Tokens
+   Dual-mode brand system: warm light (customer) + warm-tinted dark (dashboard)
+   One brand spine (emerald accent, Inter body, Geist Mono data) + Fraunces
+   display for warm-mode editorial headlines. Three-layer token model:
+   shadcn semantic aliases (--background, --primary, ...) are the only layer
+   components read; values are swapped per theme below.
+   ========================================================================== */
 
 @theme inline {
+  /* Color aliases → CSS vars (resolved per theme in :root / .dark) */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Fonts — wired in src/app/layout.tsx via next/font */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
+  --font-heading: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  /* Radius scale */
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* Motion tokens — durations */
+  --motion-instant: 100ms;
+  --motion-fast: 150ms;
+  --motion-normal: 200ms;
+  --motion-slow: 300ms;
+  --motion-slower: 400ms;
+  --motion-slowest: 500ms;
+
+  /* Motion tokens — easing curves */
+  --motion-ease-standard: cubic-bezier(0.2, 0, 0.38, 0.9);
+  --motion-ease-decelerate: cubic-bezier(0, 0, 0.2, 1);
+  --motion-ease-accelerate: cubic-bezier(0.4, 0, 1, 1);
+  --motion-ease-emphasize: cubic-bezier(0, 0, 0.15, 1);
+  --motion-ease-snap: cubic-bezier(0.2, 0, 0, 1);
+
+  /* Motion tokens — stagger */
+  --motion-stagger-child: 60ms;
+  --motion-stagger-child-dense: 30ms;
+  --motion-stagger-max: 300ms;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ---------------------------------------------------------------------------
+   WARM LIGHT THEME (customer site — default)
+   Parchment canvas, deep emerald accent, brass used scarcely.
+   --------------------------------------------------------------------------- */
+:root {
+  --background: #f7f3ec;          /* warm canvas */
+  --foreground: #1f1b16;          /* ink */
+  --card: #ffffff;                /* surface */
+  --card-foreground: #1f1b16;
+  --popover: #ffffff;
+  --popover-foreground: #1f1b16;
+  --primary: #1b3a32;             /* deep emerald */
+  --primary-foreground: #f7f3ec;
+  --secondary: #fbf8f2;           /* surface-2 */
+  --secondary-foreground: #1f1b16;
+  --muted: #f1ece2;               /* surface-3 */
+  --muted-foreground: #7a7268;
+  --accent: #b08544;              /* brass — sparing only */
+  --accent-foreground: #f7f3ec;
+  --destructive: #9c3b2e;
+  --success: #2f6b57;
+  --success-foreground: #f7f3ec;
+  --warning: #b07d3f;
+  --warning-foreground: #f7f3ec;
+  --info: #2c5560;
+  --info-foreground: #f7f3ec;
+  --border: #e4ddcf;
+  --input: #e4ddcf;
+  --ring: #1b3a32;
+  --chart-1: #1b3a32;
+  --chart-2: #2f6b57;
+  --chart-3: #b08544;
+  --chart-4: #b07d3f;
+  --chart-5: #7a7268;
+  --radius: 0.625rem;             /* 10px base */
+  --sidebar: #fbf8f2;
+  --sidebar-foreground: #1f1b16;
+  --sidebar-primary: #1b3a32;
+  --sidebar-primary-foreground: #f7f3ec;
+  --sidebar-accent: #f1ece2;
+  --sidebar-accent-foreground: #1f1b16;
+  --sidebar-border: #e4ddcf;
+  --sidebar-ring: #1b3a32;
+}
+
+/* ---------------------------------------------------------------------------
+   WARM-TINTED DARK THEME (dashboard)
+   Near-black canvas (not pure black), surface-lift depth, lifted emerald accent.
+   --------------------------------------------------------------------------- */
+.dark {
+  --background: #0e0f0d;          /* warm-tinted near-black canvas */
+  --foreground: #f2efe8;
+  --card: #16181a;                /* surface-1 */
+  --card-foreground: #f2efe8;
+  --popover: #16181a;
+  --popover-foreground: #f2efe8;
+  --primary: #4a8c7a;             /* lifted emerald */
+  --primary-foreground: #0e0f0d;
+  --secondary: #1c1f1d;           /* surface-2 */
+  --secondary-foreground: #f2efe8;
+  --muted: #232724;               /* surface-3 */
+  --muted-foreground: #8a8780;
+  --accent: #c99a52;              /* brass (dark) — sparing only */
+  --accent-foreground: #0e0f0d;
+  --destructive: #d4634f;
+  --success: #4a8c7a;
+  --success-foreground: #0e0f0d;
+  --warning: #d4a33a;
+  --warning-foreground: #0e0f0d;
+  --info: #6fa3b8;
+  --info-foreground: #0e0f0d;
+  --border: #2c302d;
+  --input: #2c302d;
+  --ring: #4a8c7a;
+  --chart-1: #4a8c7a;
+  --chart-2: #6fa3b8;
+  --chart-3: #c99a52;
+  --chart-4: #d4a33a;
+  --chart-5: #8a8780;
+  --sidebar: #0e0f0d;
+  --sidebar-foreground: #f2efe8;
+  --sidebar-primary: #4a8c7a;
+  --sidebar-primary-foreground: #0e0f0d;
+  --sidebar-accent: #1c1f1d;
+  --sidebar-accent-foreground: #f2efe8;
+  --sidebar-border: #2c302d;
+  --sidebar-ring: #4a8c7a;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+  /* A `.dark` wrapper (used by the dashboard layout to force the dark theme on
+     a subtree) should itself resolve dark tokens, not just its descendants.
+     This makes <div className="dark bg-background"> render dark correctly. */
+  .dark {
+    background-color: var(--background);
+    color: var(--foreground);
+  }
+  /* Tabular numerals for dashboard data columns (opt-in via .tnum) */
+  .tnum {
+    font-feature-settings: "tnum" 1, "cv01" 1;
+    font-variant-numeric: tabular-nums;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  /* Editorial serif display — warm-mode headlines (opt-in via .font-display) */
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  /* SVG film-grain overlay — warm customer site only (barely visible paper warmth) */
+  .grain-overlay::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.04;
+    pointer-events: none;
+    z-index: 9999;
+    mix-blend-mode: overlay;
+  }
+
+  /* Hairline border helpers (depth via borders, not shadows) */
+  .border-hairline {
+    border-width: 1px;
+    border-color: color-mix(in oklab, var(--border) 100%, transparent);
+  }
+
+  /* Scroll progress bar — driven by CSS scroll-timeline (no JS) */
+  .scroll-progress {
+    transform-origin: 0 0;
+    animation: scroll-progress-x linear;
+    animation-timeline: scroll(root);
+  }
+  @keyframes scroll-progress-x {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  /* Mask-wipe text reveal (kinetic headline) */
+  .mask-wipe {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      #000 50%,
+      transparent 50%
+    );
+    mask-image: linear-gradient(to right, #000 50%, transparent 50%);
+    -webkit-mask-size: 200% 100%;
+    mask-size: 200% 100%;
+    -webkit-mask-position: -100% 0;
+    mask-position: -100% 0;
+    animation: mask-wipe-in 0.9s var(--motion-ease-standard) forwards;
+  }
+  @keyframes mask-wipe-in {
+    to {
+      -webkit-mask-position: 0% 0;
+      mask-position: 0% 0;
+    }
+  }
+
+  /* Skeleton shimmer (content-matched loading) */
+  .shimmer {
+    background: linear-gradient(
+      90deg,
+      color-mix(in oklab, var(--muted) 100%, transparent) 0%,
+      color-mix(in oklab, var(--muted) 60%, transparent) 50%,
+      color-mix(in oklab, var(--muted) 100%, transparent) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer-sweep 1.5s var(--motion-ease-standard) infinite;
+  }
+  @keyframes shimmer-sweep {
+    to {
+      background-position: -200% 0;
+    }
+  }
+
+  /* Button shine sweep (primary CTAs) */
+  .shine-sweep {
+    position: relative;
+    overflow: hidden;
+  }
+  .shine-sweep::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -75%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+      105deg,
+      transparent,
+      color-mix(in oklab, var(--primary-foreground) 35%, transparent),
+      transparent
+    );
+    transition: left 0.7s var(--motion-ease-standard);
+    pointer-events: none;
+  }
+  .shine-sweep:hover::before {
+    left: 125%;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Reduced motion — gate ALL animations (mandatory accessibility)
+   --------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .scroll-progress,
+  .mask-wipe,
+  .shimmer,
+  .shine-sweep::before {
+    animation: none !important;
+    transition: none !important;
+  }
 }
