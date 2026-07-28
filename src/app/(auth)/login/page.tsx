@@ -2,6 +2,8 @@
 
 import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/components/providers/auth-provider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import Link from "next/link";
 import { ApiError } from "@/lib/api/apiFetch";
+import { loginSchema, type LoginValues } from "@/lib/forms/schemas";
 
 function LoginForm() {
   const { login } = useAuth();
@@ -16,27 +19,30 @@ function LoginForm() {
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") || null;
 
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [submitting, setSubmitting] = React.useState(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: { email: "", password: "" },
+  });
 
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setSubmitting(true);
+  const onSubmit = async (values: LoginValues) => {
     try {
-      const user = await login(email.trim(), password);
+      const user = await login(values.email.trim(), values.password);
       toast.success(`Welcome back, ${user.firstName}.`);
-      // Route by role.
-      const dest = redirect ?? (user.role === "customer" ? "/account" : "/dashboard");
+      const dest =
+        redirect ?? (user.role === "customer" ? "/account" : "/dashboard");
       router.replace(dest);
     } catch (err) {
       const msg =
-        err instanceof ApiError ? err.message : "Could not sign in. Please try again.";
+        err instanceof ApiError
+          ? err.message
+          : "Could not sign in. Please try again.";
       toast.error(msg);
-    } finally {
-      setSubmitting(false);
     }
-  }
+  };
 
   return (
     <div className="space-y-8">
@@ -46,18 +52,20 @@ function LoginForm() {
           Sign in to manage your bookings or your property.
         </p>
       </div>
-      <form onSubmit={onSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
           <Input
             id="email"
             type="email"
             autoComplete="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com"
+            aria-invalid={!!errors.email}
+            {...register("email")}
           />
+          {errors.email ? (
+            <p className="text-xs text-destructive">{errors.email.message}</p>
+          ) : null}
         </div>
         <div className="space-y-2">
           <Label htmlFor="password">Password</Label>
@@ -65,14 +73,18 @@ function LoginForm() {
             id="password"
             type="password"
             autoComplete="current-password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
             placeholder="••••••••"
+            aria-invalid={!!errors.password}
+            {...register("password")}
           />
+          {errors.password ? (
+            <p className="text-xs text-destructive">
+              {errors.password.message}
+            </p>
+          ) : null}
         </div>
-        <Button type="submit" className="w-full" disabled={submitting}>
-          {submitting ? "Signing in…" : "Sign in"}
+        <Button type="submit" className="w-full" disabled={isSubmitting}>
+          {isSubmitting ? "Signing in…" : "Sign in"}
         </Button>
       </form>
       <p className="text-center text-sm text-muted-foreground">

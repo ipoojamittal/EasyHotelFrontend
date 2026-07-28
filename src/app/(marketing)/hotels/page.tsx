@@ -1,10 +1,10 @@
-import { PagePlaceholder } from "@/components/primitives/page-placeholder";
+import * as React from "react";
+import { HotelsBrowse } from "@/components/marketing/hotels-browse";
 
 export default function HotelsPage() {
   return (
-    <PagePlaceholder
-      title="Browse stays"
-      description="The hotel directory with city/country filters and a card grid — Phase 1."
-    />
+    <React.Suspense fallback={null}>
+      <HotelsBrowse />
+    </React.Suspense>
   );
 }

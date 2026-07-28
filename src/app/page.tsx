@@ -2,19 +2,27 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { useAuth } from "@/components/providers/auth-provider";
 import { Loader } from "@/components/primitives/loader";
+import { Hero } from "@/components/marketing/hero";
+import { FeaturedHotels } from "@/components/marketing/featured-hotels";
+import { ExperienceSection } from "@/components/marketing/experience-section";
+import { ValuesBento } from "@/components/marketing/values-bento";
+import { StatsBand } from "@/components/marketing/stats-band";
+import { Testimonials } from "@/components/marketing/testimonials";
+import { DualCTA } from "@/components/marketing/dual-cta";
+import { SmoothScrollProvider } from "@/components/providers/smooth-scroll-provider";
+import { ScrollProgressBar } from "@/components/primitives/scroll-progress-bar";
+import { SiteHeader } from "@/components/marketing/site-header";
+import { SiteFooter } from "@/components/marketing/site-footer";
 
 /**
- * Root route — redirects by role once auth bootstraps.
- *  - customer → /account
- *  - staff/hotelAdmin/superAdmin → /dashboard
- *  - unauthenticated → stays here (the marketing landing lives at / via the
- *    (marketing) group; this page only handles the auth'd redirect).
+ * Root route — the marketing landing for anonymous users. Authenticated
+ * users are redirected by role (customer → /account, staff/admin → /dashboard).
  *
- * For unauthenticated users we render the marketing landing content here too
- * (Phase 1 will move it to a dedicated component).
+ * The landing is rendered here (not in the (marketing) group) because the
+ * auth redirect needs to run before content. For authenticated users we
+ * show a loader while the redirect fires.
  */
 export default function HomePage() {
   const { user, status } = useAuth();
@@ -22,8 +30,7 @@ export default function HomePage() {
 
   React.useEffect(() => {
     if (status === "authenticated" && user) {
-      const dest =
-        user.role === "customer" ? "/account" : "/dashboard";
+      const dest = user.role === "customer" ? "/account" : "/dashboard";
       router.replace(dest);
     }
   }, [status, user, router]);
@@ -31,57 +38,27 @@ export default function HomePage() {
   if (status === "loading") {
     return <Loader label="Loading…" />;
   }
+  if (status === "authenticated") {
+    return <Loader label="Taking you to your dashboard…" />;
+  }
 
-  // Unauthenticated → show the marketing landing (Phase 1 will expand this).
-  return <MarketingStub />;
-}
-
-/** Phase-0 landing stub — replaced by the full immersive landing in Phase 1. */
-function MarketingStub() {
+  // Unauthenticated → full immersive landing.
   return (
-    <div className="grain-overlay flex min-h-screen flex-col">
-      <header className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6">
-        <span className="font-display text-lg tracking-tight">
-          <span className="text-foreground">hms</span>
-          <span className="text-primary">.</span>
-        </span>
-        <nav className="flex items-center gap-4 text-sm">
-          <Link href="/hotels" className="text-muted-foreground hover:text-foreground">
-            Browse stays
-          </Link>
-          <Link href="/login" className="text-muted-foreground hover:text-foreground">
-            Sign in
-          </Link>
-        </nav>
-      </header>
-      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col items-center justify-center px-6 py-24 text-center">
-        <p className="mb-4 text-xs uppercase tracking-[0.2em] text-muted-foreground">
-          A modern hotel management platform
-        </p>
-        <h1 className="font-display text-5xl leading-tight tracking-tight text-foreground sm:text-6xl">
-          Run your property.
-          <br />
-          <span className="text-primary">Book the stay.</span>
-        </h1>
-        <p className="mt-6 max-w-xl text-base text-muted-foreground">
-          A dual-mode hotel management system — an immersive customer booking
-          experience and a precise, keyboard-first operations dashboard.
-        </p>
-        <div className="mt-8 flex gap-3">
-          <Link
-            href="/hotels"
-            className="shine-sweep inline-flex h-11 items-center justify-center rounded-lg bg-primary px-6 text-sm font-medium text-primary-foreground transition-transform motion-safe:hover:scale-[1.02]"
-          >
-            Explore stays
-          </Link>
-          <Link
-            href="/login"
-            className="inline-flex h-11 items-center justify-center rounded-lg border border-border px-6 text-sm font-medium text-foreground transition-colors hover:bg-muted"
-          >
-            Sign in
-          </Link>
-        </div>
-      </main>
-    </div>
+    <SmoothScrollProvider>
+      <div className="grain-overlay flex min-h-screen flex-col">
+        <ScrollProgressBar />
+        <SiteHeader />
+        <main className="flex-1">
+          <Hero />
+          <FeaturedHotels />
+          <ExperienceSection />
+          <ValuesBento />
+          <StatsBand />
+          <Testimonials />
+          <DualCTA />
+        </main>
+        <SiteFooter />
+      </div>
+    </SmoothScrollProvider>
   );
 }
