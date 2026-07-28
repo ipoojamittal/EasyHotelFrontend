@@ -1,10 +1,5 @@
-import { PagePlaceholder } from "@/components/primitives/page-placeholder";
+import { AccountHome } from "@/components/account/account-home";
 
 export default function AccountHomePage() {
-  return (
-    <PagePlaceholder
-      title="My bookings"
-      description="Your booking history with status filters — Phase 2."
-    />
-  );
+  return <AccountHome />;
 }

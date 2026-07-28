@@ -15,3 +15,8 @@ export * from "./grain-overlay";
 export * from "./scroll-progress-bar";
 export * from "./kinetic-text";
 export * from "./variable-font-hover";
+export * from "./confirm-dialog";
+export * from "./date-range-picker";
+export * from "./guest-selector";
+export * from "./step-progress";
+export * from "./booking-summary";

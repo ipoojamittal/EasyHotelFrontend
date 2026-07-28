@@ -1,4 +1,4 @@
-import { PagePlaceholder } from "@/components/primitives/page-placeholder";
+import { BookingDetail } from "@/components/account/booking-detail";
 
 export default async function BookingDetailPage({
   params,
@@ -6,10 +6,5 @@ export default async function BookingDetailPage({
   params: Promise<{ bookingId: string }>;
 }) {
   const { bookingId } = await params;
-  return (
-    <PagePlaceholder
-      title={`Booking ${bookingId}`}
-      description="Booking detail with status timeline and cancel — Phase 2."
-    />
-  );
+  return <BookingDetail bookingId={bookingId} />;
 }
