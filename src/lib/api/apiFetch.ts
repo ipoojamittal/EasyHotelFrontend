@@ -120,6 +120,36 @@ export async function apiFetch<T>(
     throw new ApiError(res.status, message, body);
   }
 
+  // Normalize Mongoose _id → id recursively so the frontend types (which
+  // expect `id: string`) match the API responses. The backend returns
+  // raw Mongoose documents with `_id`; this transforms every object in
+  // the response tree.
+  const normalized = normalizeIds(parsed);
+
   // Some endpoints return plain text (rare here); fall back to undefined.
-  return (parsed as T) ?? (undefined as T);
+  return (normalized as T) ?? (undefined as T);
+}
+
+/**
+ * Recursively converts `_id` to `id` in any object/array from the API.
+ * Also strips `__v` (Mongoose version key). Handles nested objects,
+ * arrays, and populated references.
+ */
+function normalizeIds(value: unknown): unknown {
+  if (value === null || value === undefined) return value;
+  if (Array.isArray(value)) return value.map(normalizeIds);
+  if (typeof value === "object") {
+    const obj = value as Record<string, unknown>;
+    const result: Record<string, unknown> = {};
+    for (const key of Object.keys(obj)) {
+      if (key === "__v") continue; // skip Mongoose version key
+      if (key === "_id") {
+        result.id = normalizeIds(obj[key]);
+      } else {
+        result[key] = normalizeIds(obj[key]);
+      }
+    }
+    return result;
+  }
+  return value;
 }
