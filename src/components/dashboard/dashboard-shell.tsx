@@ -42,6 +42,7 @@ const NAV_SECTIONS: { heading: string; items: NavItem[] }[] = [
     heading: "Overview",
     items: [
       { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, roles: ["staff", "hotelAdmin", "superAdmin"] },
+      { href: "/hotels", label: "All hotels", icon: Building2, roles: ["superAdmin"] },
     ],
   },
   {

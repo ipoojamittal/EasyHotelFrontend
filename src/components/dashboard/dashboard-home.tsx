@@ -11,6 +11,7 @@ import { BookingStatusBadge, RoomStatusBadge } from "@/components/primitives/sta
 import { formatCurrencyPrecise, formatDate } from "@/lib/format";
 import type { Booking, Room, RoomType } from "@/types/api";
 import { Button } from "@/components/ui/button";
+import { SuperAdminHotels } from "./superadmin-hotels";
 import {
   BedDouble,
   TrendingUp,
@@ -48,28 +49,9 @@ export function DashboardHome() {
     { limit: 50 }
   );
 
-  // superAdmin has no hotelId → show a read-only directory prompt.
+  // superAdmin has no hotelId → show the global hotel directory inline.
   if (user?.role === "superAdmin") {
-    return (
-      <div className="space-y-8">
-        <div>
-          <h1 className="font-display text-3xl tracking-tight">Dashboard</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Global overview — superAdmin scope.
-          </p>
-        </div>
-        <EmptyState
-          icon={Building2}
-          title="No hotel assigned"
-          description="SuperAdmin accounts don't have a scoped hotel. Browse the global hotel directory instead."
-          action={
-            <Button asChild size="sm">
-              <Link href="/hotels">Browse all hotels</Link>
-            </Button>
-          }
-        />
-      </div>
-    );
+    return <SuperAdminHotels />;
   }
 
   if (!hotelId) {
