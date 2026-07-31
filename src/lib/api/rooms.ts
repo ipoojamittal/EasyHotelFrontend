@@ -38,11 +38,14 @@ export const roomsApi = (hotelId: string) => ({
     if (params.sortOrder) q.set("sortOrder", params.sortOrder);
     const qs = q.toString();
     return apiFetch<{ rooms: Room[] } | Room[]>(
-      `/api/hotels/${hotelId}/rooms${qs ? `?${qs}` : ""}`
+      `/api/hotels/${hotelId}/rooms${qs ? `?${qs}` : ""}`,
+      { _skipAuthRedirect: true }
     );
   },
   get: (roomId: string) =>
-    apiFetch<Room>(`/api/hotels/${hotelId}/rooms/${roomId}`),
+    apiFetch<Room>(`/api/hotels/${hotelId}/rooms/${roomId}`, {
+      _skipAuthRedirect: true,
+    }),
   create: (payload: CreateRoomPayload) =>
     apiFetch<Room>(`/api/hotels/${hotelId}/rooms`, {
       method: "POST",

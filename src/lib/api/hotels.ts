@@ -37,7 +37,7 @@ export const hotelsApi = {
   deactivateMyHotel: () =>
     apiFetch<{ message: string }>("/api/hotels/my-hotel", { method: "DELETE" }),
 
-  // --- public (any auth) ---
+  // --- public (no auth required — landing page, browse) ---
   listHotels: (params: ListHotelsParams = {}) => {
     const q = new URLSearchParams();
     if (params.page) q.set("page", String(params.page));
@@ -48,7 +48,10 @@ export const hotelsApi = {
     if (params.sortBy) q.set("sortBy", params.sortBy);
     if (params.sortOrder) q.set("sortOrder", params.sortOrder);
     const qs = q.toString();
-    return apiFetch<PaginatedHotels>(`/api/hotels${qs ? `?${qs}` : ""}`);
+    return apiFetch<PaginatedHotels>(`/api/hotels${qs ? `?${qs}` : ""}`, {
+      _skipAuthRedirect: true,
+    });
   },
-  getHotel: (hotelId: string) => apiFetch<Hotel>(`/api/hotels/${hotelId}`),
+  getHotel: (hotelId: string) =>
+    apiFetch<Hotel>(`/api/hotels/${hotelId}`, { _skipAuthRedirect: true }),
 };
