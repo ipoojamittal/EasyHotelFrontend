@@ -1,4 +1,4 @@
-import { PagePlaceholder } from "@/components/primitives/page-placeholder";
+import { StaffForm } from "@/components/dashboard/staff-form";
 
 export default async function StaffDetailPage({
   params,
@@ -6,10 +6,5 @@ export default async function StaffDetailPage({
   params: Promise<{ userId: string }>;
 }) {
   const { userId } = await params;
-  return (
-    <PagePlaceholder
-      title={`Staff member ${userId}`}
-      description="Staff detail + edit + deactivate — Phase 4."
-    />
-  );
+  return <StaffForm mode="edit" userId={userId} />;
 }

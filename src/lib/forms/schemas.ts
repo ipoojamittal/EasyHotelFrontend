@@ -122,3 +122,22 @@ export const roomSchema = z.object({
   images: z.array(z.string()).optional().default([]),
 });
 export type RoomValues = z.infer<typeof roomSchema>;
+
+/* --- Staff (admin-created user) ------------------------------------------ */
+export const staffSchema = z.object({
+  firstName: z.string().min(1, "First name is required.").max(50),
+  lastName: z.string().min(1, "Last name is required.").max(50),
+  email: z.string().email("Enter a valid email."),
+  phoneNumber: z.string().min(7, "Enter a valid phone number.").max(20),
+  password: z.string().min(8, "Password must be at least 8 characters.").max(72),
+  role: z.enum(["staff", "hotelAdmin"]),
+});
+export type StaffValues = z.infer<typeof staffSchema>;
+
+export const staffEditSchema = z.object({
+  firstName: z.string().min(1).max(50),
+  lastName: z.string().min(1).max(50),
+  role: z.enum(["staff", "hotelAdmin"]),
+  isActive: z.boolean(),
+});
+export type StaffEditValues = z.infer<typeof staffEditSchema>;
