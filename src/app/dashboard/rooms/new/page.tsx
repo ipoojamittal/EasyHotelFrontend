@@ -1,10 +1,5 @@
-import { PagePlaceholder } from "@/components/primitives/page-placeholder";
+import { RoomForm } from "@/components/dashboard/room-form";
 
 export default function NewRoomPage() {
-  return (
-    <PagePlaceholder
-      title="New room"
-      description="Create a room form — Phase 4."
-    />
-  );
+  return <RoomForm mode="create" />;
 }

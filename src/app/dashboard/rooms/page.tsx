@@ -1,10 +1,5 @@
-import { PagePlaceholder } from "@/components/primitives/page-placeholder";
+import { RoomsList } from "@/components/dashboard/rooms-list";
 
 export default function RoomsListPage() {
-  return (
-    <PagePlaceholder
-      title="Rooms"
-      description="Room inventory table with inline status + create/edit — Phase 4."
-    />
-  );
+  return <RoomsList />;
 }

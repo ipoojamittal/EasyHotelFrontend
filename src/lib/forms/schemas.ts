@@ -106,3 +106,19 @@ export const roomTypeSchema = z.object({
   tags: z.array(z.string()).optional().default([]),
 });
 export type RoomTypeValues = z.infer<typeof roomTypeSchema>;
+
+/* --- Room ----------------------------------------------------------------- */
+export const roomSchema = z.object({
+  roomNumber: z.string().min(1, "Room number is required.").max(20),
+  roomTypeId: z.string().min(1, "Room type is required."),
+  description: z.string().max(2000).optional().or(z.literal("")),
+  capacity: z.coerce.number().min(1).max(20).optional().or(z.literal("")),
+  pricePerNight: z.coerce.number().min(0).optional().or(z.literal("")),
+  viewTypeOverride: z.string().max(100).optional().or(z.literal("")),
+  sizeOverrideValue: z.coerce.number().min(0).optional().or(z.literal("")),
+  sizeOverrideUnit: z.enum(["sqm", "sqft"]).optional().or(z.literal("")),
+  status: z.enum(["available", "occupied", "cleaning", "out_of_service"]).optional(),
+  amenities: z.array(z.string()).optional().default([]),
+  images: z.array(z.string()).optional().default([]),
+});
+export type RoomValues = z.infer<typeof roomSchema>;

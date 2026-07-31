@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -107,7 +108,7 @@ export function RoomTypeForm({
         description={error instanceof ApiError ? error.message : "It may have been removed."}
         action={
           <Button asChild size="sm">
-            <a href="/dashboard/room-types">Back to room types</a>
+            <Link href="/dashboard/room-types">Back to room types</Link>
           </Button>
         }
       />
