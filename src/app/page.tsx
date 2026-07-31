@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/providers/auth-provider";
 import { Loader } from "@/components/primitives/loader";
 import { Hero } from "@/components/marketing/hero";
@@ -17,32 +16,21 @@ import { SiteHeader } from "@/components/marketing/site-header";
 import { SiteFooter } from "@/components/marketing/site-footer";
 
 /**
- * Root route — the marketing landing for anonymous users. Authenticated
- * users are redirected by role (customer → /account, staff/admin → /dashboard).
+ * Root route — the marketing landing page. Visible to everyone (anonymous
+ * and authenticated). The site header is auth-aware: anonymous users see
+ * "Sign in", authenticated users see their avatar dropdown with a link
+ * to their dashboard/account.
  *
- * The landing is rendered here (not in the (marketing) group) because the
- * auth redirect needs to run before content. For authenticated users we
- * show a loader while the redirect fires.
+ * Authenticated users are NOT auto-redirected away — they can browse the
+ * landing page and navigate to their dashboard via the header dropdown.
  */
 export default function HomePage() {
-  const { user, status } = useAuth();
-  const router = useRouter();
-
-  React.useEffect(() => {
-    if (status === "authenticated" && user) {
-      const dest = user.role === "customer" ? "/account" : "/dashboard";
-      router.replace(dest);
-    }
-  }, [status, user, router]);
+  const { status } = useAuth();
 
   if (status === "loading") {
     return <Loader label="Loading…" />;
   }
-  if (status === "authenticated") {
-    return <Loader label="Taking you to your dashboard…" />;
-  }
 
-  // Unauthenticated → full immersive landing.
   return (
     <SmoothScrollProvider>
       <div className="grain-overlay flex min-h-screen flex-col">
