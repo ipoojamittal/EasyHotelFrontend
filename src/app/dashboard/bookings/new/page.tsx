@@ -1,10 +1,5 @@
-import { PagePlaceholder } from "@/components/primitives/page-placeholder";
+import { NewBookingForm } from "@/components/dashboard/new-booking-form";
 
-export default function NewBookingOnBehalfPage() {
-  return (
-    <PagePlaceholder
-      title="New booking"
-      description="Create a booking on behalf of a customer — Phase 4."
-    />
-  );
+export default function NewBookingPage() {
+  return <NewBookingForm />;
 }

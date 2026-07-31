@@ -22,3 +22,4 @@ export * from "./step-progress";
 export * from "./booking-summary";
 export * from "./kpi-card";
 export * from "./array-field";
+export * from "./status-stepper";
