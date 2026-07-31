@@ -1,10 +1,5 @@
-import { PagePlaceholder } from "@/components/primitives/page-placeholder";
+import { RoomTypesList } from "@/components/dashboard/room-types-list";
 
 export default function RoomTypesListPage() {
-  return (
-    <PagePlaceholder
-      title="Room types"
-      description="Room type inventory table + create/edit — Phase 3."
-    />
-  );
+  return <RoomTypesList />;
 }

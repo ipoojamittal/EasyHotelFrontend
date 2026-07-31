@@ -1,10 +1,5 @@
-import { PagePlaceholder } from "@/components/primitives/page-placeholder";
+import { HotelSettings } from "@/components/dashboard/hotel-form";
 
 export default function HotelSettingsPage() {
-  return (
-    <PagePlaceholder
-      title="My hotel"
-      description="Hotel settings + onboarding wizard — Phase 3."
-    />
-  );
+  return <HotelSettings />;
 }

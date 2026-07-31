@@ -1,4 +1,4 @@
-import { PagePlaceholder } from "@/components/primitives/page-placeholder";
+import { RoomTypeForm } from "@/components/dashboard/room-type-form";
 
 export default async function RoomTypeDetailPage({
   params,
@@ -6,10 +6,5 @@ export default async function RoomTypeDetailPage({
   params: Promise<{ roomTypeId: string }>;
 }) {
   const { roomTypeId } = await params;
-  return (
-    <PagePlaceholder
-      title={`Room type ${roomTypeId}`}
-      description="Room type detail + edit — Phase 3."
-    />
-  );
+  return <RoomTypeForm mode="edit" roomTypeId={roomTypeId} />;
 }

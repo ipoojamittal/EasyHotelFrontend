@@ -55,3 +55,54 @@ export const changePasswordSchema = z
     path: ["confirmPassword"],
   });
 export type ChangePasswordValues = z.infer<typeof changePasswordSchema>;
+
+/* --- Hotel ---------------------------------------------------------------- */
+export const hotelSchema = z.object({
+  name: z.string().min(1, "Hotel name is required.").max(120),
+  address: z.object({
+    street: z.string().min(1, "Street is required.").max(200),
+    city: z.string().min(1, "City is required.").max(100),
+    state: z.string().min(1, "State is required.").max(100),
+    zipCode: z.string().min(1, "ZIP code is required.").max(20),
+    country: z.string().min(1, "Country is required.").max(100),
+  }),
+  email: z.string().email("Enter a valid email.").optional().or(z.literal("")),
+  description: z.string().max(2000).optional().or(z.literal("")),
+  checkInTime: z.string().min(1, "Check-in time is required."),
+  checkOutTime: z.string().min(1, "Check-out time is required."),
+  amenities: z.array(z.string()).optional().default([]),
+  images: z.array(z.string()).optional().default([]),
+  phoneNumber: z.array(z.string()).optional().default([]),
+  mapsUrl: z
+    .object({
+      googleMaps: z.string().url("Enter a valid URL.").optional().or(z.literal("")),
+      appleMaps: z.string().url("Enter a valid URL.").optional().or(z.literal("")),
+    })
+    .optional(),
+});
+export type HotelValues = z.infer<typeof hotelSchema>;
+
+/* --- Room Type ------------------------------------------------------------ */
+export const roomTypeSchema = z.object({
+  name: z.string().min(1, "Name is required.").max(120),
+  typeCode: z.string().max(40).optional().or(z.literal("")),
+  description: z.string().max(2000).optional().or(z.literal("")),
+  basePrice: z.coerce.number().min(0, "Price must be 0 or more."),
+  defaultCapacity: z.coerce.number().min(1, "Capacity must be at least 1.").max(20),
+  maxCapacity: z.coerce
+    .number()
+    .min(1, "Max capacity must be at least 1.")
+    .max(20)
+    .optional()
+    .or(z.literal("")),
+  bedConfiguration: z.string().max(100).optional().or(z.literal("")),
+  viewType: z.string().max(100).optional().or(z.literal("")),
+  sizeValue: z.coerce.number().min(0).optional().or(z.literal("")),
+  sizeUnit: z.enum(["sqm", "sqft"]).optional().or(z.literal("")),
+  sortOrder: z.coerce.number().int().min(0).optional().or(z.literal("")),
+  isActive: z.boolean(),
+  amenities: z.array(z.string()).optional().default([]),
+  images: z.array(z.string()).optional().default([]),
+  tags: z.array(z.string()).optional().default([]),
+});
+export type RoomTypeValues = z.infer<typeof roomTypeSchema>;
