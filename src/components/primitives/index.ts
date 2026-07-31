@@ -20,3 +20,5 @@ export * from "./date-range-picker";
 export * from "./guest-selector";
 export * from "./step-progress";
 export * from "./booking-summary";
+export * from "./kpi-card";
+export * from "./array-field";

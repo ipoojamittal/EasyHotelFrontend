@@ -28,10 +28,6 @@ import {
  * BookingDetail — the /account/bookings/[id] page. Shows full booking
  * info (hotel, room, dates, guests, price, status, special requests),
  * hotel contact details, and a Cancel button.
- *
- * Cancel caveat: the backend's PATCH /:id/cancel is registered twice;
- * the admin/staff-only version wins, so a customer cancel may 403. We
- * handle that gracefully with a "please contact the hotel" message.
  */
 export function BookingDetail({ bookingId }: { bookingId: string }) {
   const { data: booking, isLoading, isError } = useBooking(bookingId);
@@ -68,15 +64,11 @@ export function BookingDetail({ bookingId }: { bookingId: string }) {
       await cancelMutation.mutateAsync(bookingId);
       toast.success("Booking cancelled.");
     } catch (err) {
-      if (err instanceof ApiError && err.status === 403) {
-        toast.error("Please contact the hotel to cancel this booking.");
-      } else {
-        toast.error(
-          err instanceof ApiError
-            ? err.message
-            : "Could not cancel. Please try again."
-        );
-      }
+      toast.error(
+        err instanceof ApiError
+          ? err.message
+          : "Could not cancel. Please try again."
+      );
     }
   };
 
