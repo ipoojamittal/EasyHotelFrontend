@@ -147,78 +147,89 @@ export function BookingFlow({
   };
 
   return (
-    <div className="space-y-8">
-      {/* Back link */}
-      <Link
-        href={`/hotels/${hotelId}`}
-        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
-      >
-        <ArrowLeft className="h-3.5 w-3.5" />
-        Back to {hotel.name}
-      </Link>
+    <div className="mx-auto max-w-7xl">
+      {/* Header bar: back link + stepper */}
+      <div className="mb-10 flex flex-col gap-6">
+        <Link
+          href={`/hotels/${hotelId}`}
+          className="inline-flex w-fit items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to {hotel.name}
+        </Link>
 
-      {/* Step progress */}
-      <StepProgress steps={STEPS} current={store.step} />
+        <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
+          <StepProgress steps={STEPS} current={store.step} />
+        </div>
+      </div>
 
-      <div className="grid gap-8 lg:grid-cols-3">
+      <div className="grid gap-8 lg:grid-cols-12">
         {/* Main: step content */}
-        <div className="lg:col-span-2">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={store.step}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.25, ease: [0, 0, 0.15, 1] as const }}
-            >
-              {store.step === 0 ? (
-                <StepDates
-                  checkIn={store.checkIn}
-                  checkOut={store.checkOut}
-                  guests={store.guests}
-                  onDatesChange={(from, to) => store.setDates(from, to)}
-                  onGuestsChange={store.setGuests}
-                />
-              ) : store.step === 1 ? (
-                <StepRoom room={room} />
-              ) : store.step === 2 ? (
-                <StepDetails
-                  firstName={store.firstName}
-                  lastName={store.lastName}
-                  email={store.email}
-                  phoneNumber={store.phoneNumber}
-                  onChange={store.setGuestDetails}
-                />
-              ) : (
-                <StepReview
-                  hotel={hotel}
-                  room={room}
-                  checkIn={store.checkIn}
-                  checkOut={store.checkOut}
-                  guests={store.guests}
-                  specialRequests={store.specialRequests}
-                  firstName={store.firstName}
-                  lastName={store.lastName}
-                  email={store.email}
-                  phoneNumber={store.phoneNumber}
-                />
-              )}
-            </motion.div>
-          </AnimatePresence>
+        <div className="lg:col-span-8">
+          <div className="min-h-[28rem] overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={store.step}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.25, ease: [0, 0, 0.15, 1] as const }}
+              >
+                {store.step === 0 ? (
+                  <StepDates
+                    checkIn={store.checkIn}
+                    checkOut={store.checkOut}
+                    guests={store.guests}
+                    onDatesChange={(from, to) => store.setDates(from, to)}
+                    onGuestsChange={store.setGuests}
+                  />
+                ) : store.step === 1 ? (
+                  <StepRoom room={room} />
+                ) : store.step === 2 ? (
+                  <StepDetails
+                    firstName={store.firstName}
+                    lastName={store.lastName}
+                    email={store.email}
+                    phoneNumber={store.phoneNumber}
+                    onChange={store.setGuestDetails}
+                  />
+                ) : (
+                  <StepReview
+                    hotel={hotel}
+                    room={room}
+                    checkIn={store.checkIn}
+                    checkOut={store.checkOut}
+                    guests={store.guests}
+                    specialRequests={store.specialRequests}
+                    firstName={store.firstName}
+                    lastName={store.lastName}
+                    email={store.email}
+                    phoneNumber={store.phoneNumber}
+                  />
+                )}
+              </motion.div>
+            </AnimatePresence>
+          </div>
 
           {/* Nav buttons */}
-          <div className="mt-8 flex items-center justify-between">
+          <div className="mt-6 flex items-center justify-between">
             <Button
               variant="ghost"
               onClick={back}
               disabled={store.step === 0}
-              className="gap-1.5"
+              size="lg"
+              className="gap-2 px-6"
             >
               <ArrowLeft className="h-4 w-4" />
               Back
             </Button>
             {store.step < STEPS.length - 1 ? (
-              <Button onClick={next} disabled={!canProceed} className="gap-1.5">
+              <Button
+                onClick={next}
+                disabled={!canProceed}
+                size="lg"
+                className="gap-2 px-8"
+              >
                 Continue
                 <ArrowRight className="h-4 w-4" />
               </Button>
@@ -226,7 +237,8 @@ export function BookingFlow({
               <Button
                 onClick={onConfirm}
                 disabled={createBooking.isPending}
-                className="shine-sweep gap-1.5"
+                size="lg"
+                className="gap-2 bg-emerald-600 px-8 hover:bg-emerald-700"
               >
                 {createBooking.isPending ? "Confirming…" : "Confirm booking"}
                 <Check className="h-4 w-4" />
@@ -236,7 +248,7 @@ export function BookingFlow({
         </div>
 
         {/* Sidebar: persistent summary (desktop) */}
-        <aside className="hidden lg:block">
+        <aside className="hidden lg:col-span-4 lg:block">
           <div className="sticky top-24">
             <BookingSummary
               hotel={hotel}
@@ -281,31 +293,46 @@ function StepDates({
 }) {
   const [open, setOpen] = React.useState(false);
   const selected = checkIn || checkOut ? { from: checkIn, to: checkOut } : undefined;
-  const label =
-    checkIn && checkOut
-      ? `${format(checkIn, "MMM d")} → ${format(checkOut, "MMM d")}`
-      : "Select dates";
+
+  const checkInLabel = checkIn ? format(checkIn, "EEEE, MMM d") : "Select check-in";
+  const checkOutLabel = checkOut ? format(checkOut, "EEEE, MMM d") : "Select check-out";
+  const nights = checkIn && checkOut ? nightsBetween(checkIn, checkOut) : 0;
 
   return (
-    <section className="space-y-6">
-      <div>
-        <h2 className="font-display text-2xl tracking-tight">When are you coming?</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Choose your check-in and check-out dates.
+    <section className="space-y-8">
+      <div className="space-y-2">
+        <h2 className="font-display text-3xl tracking-tight">When are you coming?</h2>
+        <p className="text-muted-foreground">
+          Choose your check-in and check-out dates to get started.
         </p>
       </div>
 
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <Label>Dates</Label>
+      <div className="space-y-6">
+        {/* Dates trigger */}
+        <div className="space-y-3">
+          <Label className="text-sm font-semibold">Stay dates</Label>
           <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
               <Button
                 variant="outline"
-                className="w-full justify-start gap-2 font-normal"
+                className="flex h-auto w-full items-center justify-between rounded-xl border border-border bg-muted/30 p-4 font-normal transition-colors hover:bg-muted/50"
               >
-                <CalendarIcon className="h-4 w-4 text-muted-foreground" />
-                {label}
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                    <CalendarIcon className="h-5 w-5" />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-sm text-muted-foreground">{nights > 0 ? `${nights} night${nights === 1 ? "" : "s"} selected` : "Pick your dates"}</p>
+                    <p className="text-base font-medium">
+                      {checkIn && checkOut
+                        ? `${format(checkIn, "MMM d")} — ${format(checkOut, "MMM d")}`
+                        : checkInLabel}
+                    </p>
+                  </div>
+                </div>
+                <span className="rounded-md bg-muted px-2.5 py-1 text-xs font-medium text-foreground">
+                  Change
+                </span>
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
@@ -318,19 +345,43 @@ function StepDates({
               />
             </PopoverContent>
           </Popover>
+
+          {checkIn && checkOut ? (
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-xl border border-border bg-muted/20 p-4">
+                <p className="text-xs uppercase tracking-[0.1em] text-muted-foreground">Check-in</p>
+                <p className="mt-1 font-medium">{checkInLabel}</p>
+              </div>
+              <div className="rounded-xl border border-border bg-muted/20 p-4">
+                <p className="text-xs uppercase tracking-[0.1em] text-muted-foreground">Check-out</p>
+                <p className="mt-1 font-medium">{checkOutLabel}</p>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-xl border border-dashed border-border bg-muted/10 p-4 text-muted-foreground">
+                <p className="text-xs uppercase tracking-[0.1em]">Check-in</p>
+                <p className="mt-1 text-sm">Not selected</p>
+              </div>
+              <div className="rounded-xl border border-dashed border-border bg-muted/10 p-4 text-muted-foreground">
+                <p className="text-xs uppercase tracking-[0.1em]">Check-out</p>
+                <p className="mt-1 text-sm">Not selected</p>
+              </div>
+            </div>
+          )}
         </div>
 
-        <div className="space-y-2">
-          <Label>Guests</Label>
-          <GuestSelector value={guests} onChange={onGuestsChange} />
+        {/* Guests */}
+        <div className="space-y-3">
+          <Label className="text-sm font-semibold">Guests</Label>
+          <div className="flex items-center gap-4 rounded-xl border border-border bg-muted/20 p-4">
+            <div className="flex-1">
+              <p className="font-medium">{guests} {guests === 1 ? "guest" : "guests"}</p>
+              <p className="text-xs text-muted-foreground">Adults staying in the room</p>
+            </div>
+            <GuestSelector value={guests} onChange={onGuestsChange} />
+          </div>
         </div>
-
-        {checkIn && checkOut ? (
-          <p className="text-sm text-muted-foreground">
-            {nightsBetween(checkIn, checkOut)}{" "}
-            {nightsBetween(checkIn, checkOut) === 1 ? "night" : "nights"}
-          </p>
-        ) : null}
       </div>
     </section>
   );
@@ -352,10 +403,10 @@ function StepRoom({ room }: { room: Room }) {
   const [requests, setRequests] = useBookingStore((s) => [s.specialRequests, s.setSpecialRequests]);
 
   return (
-    <section className="space-y-6">
-      <div>
-        <h2 className="font-display text-2xl tracking-tight">Your room</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
+    <section className="space-y-8">
+      <div className="space-y-2">
+        <h2 className="font-display text-3xl tracking-tight">Your room</h2>
+        <p className="text-muted-foreground">
           Review the room and add any special requests.
         </p>
       </div>
@@ -366,50 +417,57 @@ function StepRoom({ room }: { room: Room }) {
         className="max-w-2xl"
       />
 
-      <div className="space-y-4">
-        <div className="rounded-lg border border-border bg-card p-5">
-          <h3 className="font-display text-lg tracking-tight">
-            Room {room.roomNumber}
-          </h3>
-          {roomType ? (
-            <p className="text-sm text-muted-foreground">{roomType.name}</p>
-          ) : null}
-          {roomType?.description ? (
-            <p className="mt-3 text-sm text-foreground/90">
-              {roomType.description}
-            </p>
-          ) : null}
-          {amenities.length > 0 ? (
-            <div className="mt-4 flex flex-wrap gap-2">
-              {amenities.map((a) => (
-                <span
-                  key={a}
-                  className="rounded-full bg-muted px-2.5 py-0.5 text-xs text-muted-foreground"
-                >
-                  {a}
-                </span>
-              ))}
-            </div>
-          ) : null}
-          {price != null ? (
-            <p className="mt-4 text-sm">
-              <span className="font-display text-xl text-foreground">
-                {formatCurrencyPrecise(price)}
-              </span>
-              <span className="text-muted-foreground"> / night</span>
-            </p>
-          ) : null}
+      <div className="space-y-6">
+        <div className="overflow-hidden rounded-2xl border border-border bg-card">
+          <div className="bg-muted/50 p-5">
+            <h3 className="font-display text-xl tracking-tight">
+              Room {room.roomNumber}
+            </h3>
+            {roomType ? (
+              <p className="text-sm text-muted-foreground">{roomType.name}</p>
+            ) : null}
+          </div>
+          <div className="p-5">
+            {roomType?.description ? (
+              <p className="text-sm text-foreground/90 leading-relaxed">
+                {roomType.description}
+              </p>
+            ) : null}
+            {amenities.length > 0 ? (
+              <div className="mt-4 flex flex-wrap gap-2">
+                {amenities.map((a) => (
+                  <span
+                    key={a}
+                    className="rounded-full bg-muted px-3 py-1 text-xs font-medium text-muted-foreground"
+                  >
+                    {a}
+                  </span>
+                ))}
+              </div>
+            ) : null}
+            {price != null ? (
+              <div className="mt-5 border-t border-border pt-4">
+                <p className="text-sm text-muted-foreground">
+                  <span className="font-display text-2xl font-medium text-foreground">
+                    {formatCurrencyPrecise(price)}
+                  </span>
+                  <span> / night</span>
+                </p>
+              </div>
+            ) : null}
+          </div>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="specialRequests">Special requests (optional)</Label>
+        <div className="space-y-3">
+          <Label htmlFor="specialRequests" className="text-sm font-semibold">Special requests <span className="font-normal text-muted-foreground">(optional)</span></Label>
           <Textarea
             id="specialRequests"
             placeholder="Late check-in, extra pillows, accessibility needs…"
             maxLength={1000}
             value={requests}
             onChange={(e) => setRequests(e.target.value)}
-            rows={4}
+            rows={5}
+            className="rounded-xl"
           />
           <p className="text-xs text-muted-foreground">
             {requests.length}/1000 characters
@@ -435,50 +493,54 @@ function StepDetails({
   onChange: (details: { firstName?: string; lastName?: string; email?: string; phoneNumber?: string }) => void;
 }) {
   return (
-    <section className="space-y-6">
-      <div>
-        <h2 className="font-display text-2xl tracking-tight">Your details</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
+    <section className="space-y-8">
+      <div className="space-y-2">
+        <h2 className="font-display text-3xl tracking-tight">Your details</h2>
+        <p className="text-muted-foreground">
           We&apos;ll use these to confirm your booking.
         </p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-5 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="firstName">First name</Label>
+          <Label htmlFor="firstName" className="text-sm font-semibold">First name</Label>
           <Input
             id="firstName"
             value={firstName}
             onChange={(e) => onChange({ firstName: e.target.value })}
+            className="h-12 rounded-xl"
             required
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="lastName">Last name</Label>
+          <Label htmlFor="lastName" className="text-sm font-semibold">Last name</Label>
           <Input
             id="lastName"
             value={lastName}
             onChange={(e) => onChange({ lastName: e.target.value })}
+            className="h-12 rounded-xl"
             required
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email" className="text-sm font-semibold">Email</Label>
           <Input
             id="email"
             type="email"
             value={email}
             onChange={(e) => onChange({ email: e.target.value })}
+            className="h-12 rounded-xl"
             required
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="phone">Phone</Label>
+          <Label htmlFor="phone" className="text-sm font-semibold">Phone</Label>
           <Input
             id="phone"
             type="tel"
             value={phoneNumber}
             onChange={(e) => onChange({ phoneNumber: e.target.value })}
+            className="h-12 rounded-xl"
           />
         </div>
       </div>
@@ -511,69 +573,85 @@ function StepReview({
   phoneNumber: string;
 }) {
   return (
-    <section className="space-y-6">
-      <div>
-        <h2 className="font-display text-2xl tracking-tight">Review & confirm</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
+    <section className="space-y-8">
+      <div className="space-y-2">
+        <h2 className="font-display text-3xl tracking-tight">Review & confirm</h2>
+        <p className="text-muted-foreground">
           Please review your booking before confirming.
         </p>
       </div>
 
-      <div className="space-y-4">
+      <div className="grid gap-4 sm:grid-cols-2">
         {/* Guest */}
-        <div className="rounded-lg border border-border bg-card p-5">
-          <h3 className="mb-3 text-sm font-medium uppercase tracking-[0.15em] text-muted-foreground">
-            Guest
-          </h3>
-          <p className="font-medium">
-            {firstName} {lastName}
-          </p>
-          <p className="text-sm text-muted-foreground">{email}</p>
-          {phoneNumber ? (
-            <p className="text-sm text-muted-foreground">{phoneNumber}</p>
-          ) : null}
+        <div className="overflow-hidden rounded-2xl border border-border bg-card">
+          <div className="bg-muted/50 p-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.15em] text-muted-foreground">
+              Guest
+            </p>
+          </div>
+          <div className="p-5">
+            <p className="font-display text-lg font-medium">
+              {firstName} {lastName}
+            </p>
+            <p className="mt-1 text-sm text-muted-foreground">{email}</p>
+            {phoneNumber ? (
+              <p className="mt-1 text-sm text-muted-foreground">{phoneNumber}</p>
+            ) : null}
+          </div>
         </div>
 
         {/* Stay */}
-        <div className="rounded-lg border border-border bg-card p-5">
-          <h3 className="mb-3 text-sm font-medium uppercase tracking-[0.15em] text-muted-foreground">
-            Stay
-          </h3>
-          <dl className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <dt className="text-muted-foreground">Hotel</dt>
-              <dd className="font-medium">{hotel.name}</dd>
-            </div>
-            <div className="flex justify-between">
-              <dt className="text-muted-foreground">Room</dt>
-              <dd className="font-medium">
-                Room {room.roomNumber}
-              </dd>
-            </div>
-            <div className="flex justify-between">
-              <dt className="text-muted-foreground">Check-in</dt>
-              <dd className="font-medium">
-                {checkIn ? format(checkIn, "MMM d, yyyy") : "—"}
-              </dd>
-            </div>
-            <div className="flex justify-between">
-              <dt className="text-muted-foreground">Check-out</dt>
-              <dd className="font-medium">
-                {checkOut ? format(checkOut, "MMM d, yyyy") : "—"}
-              </dd>
-            </div>
-            <div className="flex justify-between">
-              <dt className="text-muted-foreground">Guests</dt>
-              <dd className="font-medium">{guests}</dd>
-            </div>
-            {specialRequests ? (
-              <div className="flex justify-between gap-4">
-                <dt className="shrink-0 text-muted-foreground">Requests</dt>
-                <dd className="text-right font-medium">{specialRequests}</dd>
+        <div className="overflow-hidden rounded-2xl border border-border bg-card">
+          <div className="bg-muted/50 p-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.15em] text-muted-foreground">
+              Stay
+            </p>
+          </div>
+          <div className="p-5">
+            <dl className="space-y-2 text-sm">
+              <div className="flex justify-between">
+                <dt className="text-muted-foreground">Hotel</dt>
+                <dd className="font-medium text-right">{hotel.name}</dd>
               </div>
-            ) : null}
-          </dl>
+              <div className="flex justify-between">
+                <dt className="text-muted-foreground">Room</dt>
+                <dd className="font-medium text-right">
+                  Room {room.roomNumber}
+                </dd>
+              </div>
+              <div className="flex justify-between">
+                <dt className="text-muted-foreground">Check-in</dt>
+                <dd className="font-medium text-right">
+                  {checkIn ? format(checkIn, "MMM d, yyyy") : "—"}
+                </dd>
+              </div>
+              <div className="flex justify-between">
+                <dt className="text-muted-foreground">Check-out</dt>
+                <dd className="font-medium text-right">
+                  {checkOut ? format(checkOut, "MMM d, yyyy") : "—"}
+                </dd>
+              </div>
+              <div className="flex justify-between">
+                <dt className="text-muted-foreground">Guests</dt>
+                <dd className="font-medium text-right">{guests}</dd>
+              </div>
+            </dl>
+          </div>
         </div>
+
+        {/* Special requests */}
+        {specialRequests ? (
+          <div className="overflow-hidden rounded-2xl border border-border bg-card sm:col-span-2">
+            <div className="bg-muted/50 p-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.15em] text-muted-foreground">
+                Special requests
+              </p>
+            </div>
+            <div className="p-5">
+              <p className="text-sm text-foreground/90 leading-relaxed">{specialRequests}</p>
+            </div>
+          </div>
+        ) : null}
       </div>
     </section>
   );
@@ -590,28 +668,31 @@ function BookingSuccess({
   onGoToBooking: () => void;
 }) {
   return (
-    <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
+    <div className="flex min-h-[60vh] flex-col items-center justify-center rounded-2xl border border-border bg-card p-8 text-center shadow-sm">
       <motion.div
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ type: "spring", stiffness: 380, damping: 30 }}
-        className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/15 text-primary"
+        className="flex h-20 w-20 items-center justify-center rounded-full bg-emerald-100 text-emerald-600"
       >
-        <Check className="h-8 w-8" />
+        <Check className="h-10 w-10" strokeWidth={2.5} />
       </motion.div>
-      <h1 className="mt-6 font-display text-3xl tracking-tight">
+      <h1 className="mt-6 font-display text-4xl tracking-tight">
         Booking confirmed
       </h1>
-      <p className="mt-3 max-w-md text-sm text-muted-foreground">
+      <p className="mt-3 max-w-md text-muted-foreground">
         Your stay at {hotelName} is booked. We&apos;ve saved your confirmation —
         you can review it anytime in your bookings.
       </p>
-      <p className="mt-4 font-mono text-xs text-muted-foreground">
+      <p className="mt-4 font-mono text-sm text-muted-foreground">
         Ref: {bookingId}
       </p>
-      <div className="mt-8 flex gap-3">
-        <Button onClick={onGoToBooking}>View booking</Button>
-        <Button asChild variant="outline">
+      <div className="mt-8 flex flex-wrap justify-center gap-3">
+        <Button onClick={onGoToBooking} size="lg" className="gap-2">
+          View booking
+          <ArrowRight className="h-4 w-4" />
+        </Button>
+        <Button asChild variant="outline" size="lg">
           <Link href="/account">My bookings</Link>
         </Button>
       </div>
@@ -622,16 +703,18 @@ function BookingSuccess({
 /* --- Skeleton ----------------------------------------------------------- */
 function BookingFlowSkeleton() {
   return (
-    <div className="space-y-8">
+    <div className="mx-auto max-w-7xl space-y-8">
       <Skeleton className="h-4 w-32" />
-      <Skeleton className="h-8 w-full max-w-md" />
-      <div className="grid gap-8 lg:grid-cols-3">
-        <div className="space-y-4 lg:col-span-2">
-          <Skeleton className="h-12 w-full" />
-          <Skeleton className="h-48 w-full rounded-lg" />
-          <Skeleton className="h-10 w-32" />
+      <Skeleton className="h-24 w-full rounded-2xl" />
+      <div className="grid gap-8 lg:grid-cols-12">
+        <div className="space-y-4 lg:col-span-8">
+          <Skeleton className="h-[28rem] w-full rounded-2xl" />
+          <div className="flex justify-between">
+            <Skeleton className="h-12 w-28 rounded-lg" />
+            <Skeleton className="h-12 w-32 rounded-lg" />
+          </div>
         </div>
-        <Skeleton className="h-64 w-full rounded-lg" />
+        <Skeleton className="h-80 w-full rounded-2xl lg:col-span-4" />
       </div>
     </div>
   );
