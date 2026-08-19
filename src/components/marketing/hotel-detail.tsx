@@ -24,6 +24,7 @@ export function HotelDetail({ hotelId }: { hotelId: string }) {
   const { data: hotel, isLoading: hotelLoading, isError: hotelError } = useHotel(hotelId);
   const { data: rooms, isLoading: roomsLoading } = useRooms(hotelId, {
     isDeleted: false,
+    limit: 100,
   });
 
   if (hotelError) {
@@ -193,8 +194,11 @@ export function HotelDetail({ hotelId }: { hotelId: string }) {
 
 /**
  * RoomCard — a single room in the hotel detail room list. Shows image,
- * type, capacity, price, status, and a "Reserve" button (booking flow
- * ships in Phase 2; for now it's a disabled placeholder).
+ * type, capacity, price, status, and a "Reserve" button.
+ *
+ * Only out_of_service rooms are unbookable. Rooms that are currently
+ * occupied or cleaning can still be reserved for future dates — the
+ * backend's overlap check handles real availability.
  */
 function RoomCard({ room, hotelId }: { room: Room; hotelId: string }) {
   const roomType =
@@ -204,6 +208,7 @@ function RoomCard({ room, hotelId }: { room: Room; hotelId: string }) {
   const capacity = room.capacity ?? roomType?.defaultCapacity;
   const image =
     room.images?.[0] ?? roomType?.images?.[0] ?? null;
+  const isBookable = room.status !== "out_of_service";
 
   return (
     <div className="flex flex-col gap-4 rounded-lg border border-border bg-card p-4 sm:flex-row">
@@ -259,17 +264,17 @@ function RoomCard({ room, hotelId }: { room: Room; hotelId: string }) {
           <Button
             asChild
             size="sm"
-            disabled={room.status !== "available"}
-            aria-disabled={room.status !== "available"}
+            disabled={!isBookable}
+            aria-disabled={!isBookable}
           >
             <Link
               href={`/hotels/${hotelId}/rooms/${room.id}/book`}
-              aria-disabled={room.status !== "available"}
+              aria-disabled={!isBookable}
               className={
-                room.status !== "available" ? "pointer-events-none opacity-50" : ""
+                !isBookable ? "pointer-events-none opacity-50" : ""
               }
             >
-              {room.status === "available" ? "Reserve" : "Unavailable"}
+              {isBookable ? "Reserve" : "Out of service"}
             </Link>
           </Button>
         </div>

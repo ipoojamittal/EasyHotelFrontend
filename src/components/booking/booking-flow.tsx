@@ -130,8 +130,11 @@ export function BookingFlow({
       const res = await createBooking.mutateAsync({
         hotelId: store.hotelId,
         roomId: store.roomId,
-        checkInDate: store.checkIn.toISOString(),
-        checkOutDate: store.checkOut.toISOString(),
+        // Send date-only strings (yyyy-MM-dd) to avoid timezone shifts.
+        // The backend's isISO8601().toDate() parses these as UTC midnight,
+        // matching the seed data which also uses UTC midnight.
+        checkInDate: format(store.checkIn, "yyyy-MM-dd"),
+        checkOutDate: format(store.checkOut, "yyyy-MM-dd"),
         numberOfGuests: store.guests,
         specialRequests: store.specialRequests || undefined,
       });
