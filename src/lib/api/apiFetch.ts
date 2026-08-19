@@ -98,11 +98,11 @@ export async function apiFetch<T>(
   const parsed = isJson ? await res.json().catch(() => undefined) : undefined;
 
   if (!res.ok) {
-    const body: ApiErrorBody = parsed ?? { message: res.statusText };
+    const errBody: ApiErrorBody = parsed ?? { message: res.statusText };
     const message =
-      body.message ??
-      (body.errors && body.errors.length
-        ? body.errors[0].msg
+      errBody.message ??
+      (errBody.errors && errBody.errors.length
+        ? errBody.errors[0].msg
         : `Request failed (${res.status})`);
 
     if (res.status === 401 && !_skipAuthRedirect) {
@@ -117,7 +117,7 @@ export async function apiFetch<T>(
       }
     }
 
-    throw new ApiError(res.status, message, body);
+    throw new ApiError(res.status, message, errBody);
   }
 
   // Normalize Mongoose _id → id recursively so the frontend types (which
