@@ -1,5 +1,7 @@
 # EasyHotel Frontend
 
+> This is the **frontend** repository for EasyHotel. The companion backend lives at **[ipoojamittal/EasyHotelBackend](https://github.com/ipoojamittal/EasyHotelBackend)**.
+
 The customer-facing and staff dashboard frontend for the EasyHotel Hotel Management System (HMS). Built with Next.js 16 (App Router), React 19, and TypeScript, it provides an immersive marketing landing page, a customer booking flow, an account portal, and a full hotel operations dashboard for staff and hotel admins.
 
 ## Table of Contents
