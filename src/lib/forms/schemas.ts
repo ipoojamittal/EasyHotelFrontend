@@ -100,7 +100,7 @@ export const roomTypeSchema = z.object({
   sizeValue: z.coerce.number().min(0).optional().or(z.literal("")),
   sizeUnit: z.enum(["sqm", "sqft"]).optional().or(z.literal("")),
   sortOrder: z.coerce.number().int().min(0).optional().or(z.literal("")),
-  isActive: z.boolean(),
+  isDeleted: z.boolean(),
   amenities: z.array(z.string()).optional().default([]),
   images: z.array(z.string()).optional().default([]),
   tags: z.array(z.string()).optional().default([]),
@@ -138,6 +138,6 @@ export const staffEditSchema = z.object({
   firstName: z.string().min(1).max(50),
   lastName: z.string().min(1).max(50),
   role: z.enum(["staff", "hotelAdmin"]),
-  isActive: z.boolean(),
+  isDeleted: z.boolean(),
 });
 export type StaffEditValues = z.infer<typeof staffEditSchema>;

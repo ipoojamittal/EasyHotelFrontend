@@ -22,7 +22,7 @@ export interface ListHotelsParams {
   limit?: number;
   city?: string;
   country?: string;
-  isActive?: boolean;
+  isDeleted?: boolean;
   sortBy?: string;
   sortOrder?: "asc" | "desc";
 }
@@ -44,7 +44,7 @@ export const hotelsApi = {
     if (params.limit) q.set("limit", String(params.limit));
     if (params.city) q.set("city", params.city);
     if (params.country) q.set("country", params.country);
-    if (params.isActive !== undefined) q.set("isActive", String(params.isActive));
+    if (params.isDeleted !== undefined) q.set("isDeleted", String(params.isDeleted));
     if (params.sortBy) q.set("sortBy", params.sortBy);
     if (params.sortOrder) q.set("sortOrder", params.sortOrder);
     const qs = q.toString();

@@ -18,14 +18,14 @@ export interface CreateRoomTypePayload {
 }
 
 export type UpdateRoomTypePayload = Partial<CreateRoomTypePayload> & {
-  isActive?: boolean;
+  isDeleted?: boolean;
 };
 
 export interface ListRoomTypesParams {
   page?: number;
   limit?: number;
   name?: string;
-  isActive?: boolean;
+  isDeleted?: boolean;
   sortBy?: string;
   sortOrder?: "asc" | "desc";
 }
@@ -39,7 +39,7 @@ export const roomTypesApi = (hotelId: string) => ({
     if (params.page) q.set("page", String(params.page));
     if (params.limit) q.set("limit", String(params.limit));
     if (params.name) q.set("name", params.name);
-    if (params.isActive !== undefined) q.set("isActive", String(params.isActive));
+    if (params.isDeleted !== undefined) q.set("isDeleted", String(params.isDeleted));
     if (params.sortBy) q.set("sortBy", params.sortBy);
     if (params.sortOrder) q.set("sortOrder", params.sortOrder);
     const qs = q.toString();

@@ -24,12 +24,12 @@ export interface AdminUpdateUserPayload {
   firstName?: string;
   lastName?: string;
   role?: Role;
-  isActive?: boolean;
+  isDeleted?: boolean;
 }
 
 export interface UsersListParams {
   role?: Role;
-  isActive?: boolean;
+  isDeleted?: boolean;
   page?: number;
   limit?: number;
 }
@@ -52,7 +52,7 @@ export const usersApi = {
   listUsers: (params: UsersListParams = {}) => {
     const q = new URLSearchParams();
     if (params.role) q.set("role", params.role);
-    if (params.isActive !== undefined) q.set("isActive", String(params.isActive));
+    if (params.isDeleted !== undefined) q.set("isDeleted", String(params.isDeleted));
     if (params.page) q.set("page", String(params.page));
     if (params.limit) q.set("limit", String(params.limit));
     const qs = q.toString();

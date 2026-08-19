@@ -21,7 +21,7 @@ export interface ListRoomsParams {
   limit?: number;
   roomTypeId?: string;
   status?: RoomStatus;
-  isActive?: boolean;
+  isDeleted?: boolean;
   sortBy?: string;
   sortOrder?: "asc" | "desc";
 }
@@ -33,7 +33,7 @@ export const roomsApi = (hotelId: string) => ({
     if (params.limit) q.set("limit", String(params.limit));
     if (params.roomTypeId) q.set("roomTypeId", params.roomTypeId);
     if (params.status) q.set("status", params.status);
-    if (params.isActive !== undefined) q.set("isActive", String(params.isActive));
+    if (params.isDeleted !== undefined) q.set("isDeleted", String(params.isDeleted));
     if (params.sortBy) q.set("sortBy", params.sortBy);
     if (params.sortOrder) q.set("sortOrder", params.sortOrder);
     const qs = q.toString();

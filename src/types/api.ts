@@ -80,7 +80,7 @@ export interface Hotel {
   checkOutTime: string;
   location?: HotelLocation;
   mapsUrl?: HotelMapsUrl;
-  isActive: boolean;
+  isDeleted: boolean;
   createdBy: string | { id: string; firstName: string; lastName: string; email?: string };
   createdAt?: string;
   updatedAt?: string;
@@ -102,7 +102,7 @@ export interface RoomType {
   size?: RoomSize;
   tags?: string[];
   sortOrder?: number;
-  isActive: boolean;
+  isDeleted: boolean;
   createdAt?: string;
   updatedAt?: string;
 }
