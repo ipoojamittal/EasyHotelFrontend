@@ -39,7 +39,7 @@ const STEPS = ["Dates", "Room", "Details", "Review"];
  * Step 1: Dates & guests (DateRangePicker + GuestSelector)
  * Step 2: Room & extras (gallery + specialRequests)
  * Step 3: Guest details (auto-filled from /me, editable)
- * Step 4: Review & confirm (BookingSummary + POST /api/booking)
+ * Step 4: Review & confirm (BookingSummary + POST /api/bookings)
  *
  * Sticky summary sidebar on desktop, bottom bar on mobile. StepProgress
  * with sliding active pill at the top. Animated step transitions.
@@ -58,26 +58,28 @@ export function BookingFlow({
   const router = useRouter();
 
   const store = useBookingStore();
+  // Stable selectors for effect dependencies (Zustand actions are stable refs).
+  const initStore = useBookingStore((s) => s.init);
+  const setGuestDetails = useBookingStore((s) => s.setGuestDetails);
+  const storeFirstName = useBookingStore((s) => s.firstName);
   const [confirmedBookingId, setConfirmedBookingId] = React.useState<string | null>(null);
 
   // Seed the store with hotelId/roomId on mount, and auto-fill guest
   // details from /me when it loads.
   React.useEffect(() => {
-    store.init(hotelId, roomId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hotelId, roomId]);
+    initStore(hotelId, roomId);
+  }, [initStore, hotelId, roomId]);
 
   React.useEffect(() => {
-    if (me && !store.firstName) {
-      store.setGuestDetails({
+    if (me && !storeFirstName) {
+      setGuestDetails({
         firstName: me.firstName,
         lastName: me.lastName,
         email: me.email ?? "",
         phoneNumber: me.phoneNumber ?? "",
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [me]);
+  }, [me, storeFirstName, setGuestDetails]);
 
   if (hotelError || roomError) {
     return (

@@ -28,7 +28,7 @@ import { CalendarDays, Save } from "lucide-react";
 
 /**
  * NewBookingForm — the /dashboard/bookings/new page. Staff/hotelAdmin
- * create a booking on behalf of a customer (POST /api/booking/hotel).
+ * create a booking on behalf of a customer (POST /api/bookings/hotel).
  *
  * Fields: customerId, roomId, checkInDate, checkOutDate, numberOfGuests,
  * specialRequests.

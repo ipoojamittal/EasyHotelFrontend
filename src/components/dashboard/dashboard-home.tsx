@@ -49,6 +49,18 @@ export function DashboardHome() {
     { limit: 50 }
   );
 
+  // Memoize ADR calculation to avoid recomputing on every render.
+  const adr = React.useMemo(() => {
+    const roomList = rooms ?? [];
+    const prices = roomList
+      .map((r) => {
+        const rt = typeof r.roomType === "object" ? (r.roomType as RoomType) : null;
+        return r.pricePerNight ?? rt?.basePrice ?? 0;
+      })
+      .filter((p) => p > 0);
+    return prices.length > 0 ? prices.reduce((a, b) => a + b, 0) / prices.length : 0;
+  }, [rooms]);
+
   // superAdmin has no hotelId → show the global hotel directory inline.
   if (user?.role === "superAdmin") {
     return <SuperAdminHotels />;
@@ -79,14 +91,6 @@ export function DashboardHome() {
   const totalRooms = roomList.length;
   const occupiedRooms = roomList.filter((r) => r.status === "occupied").length;
   const occupancy = totalRooms > 0 ? Math.round((occupiedRooms / totalRooms) * 100) : 0;
-
-  const prices = roomList
-    .map((r) => {
-      const rt = typeof r.roomType === "object" ? (r.roomType as RoomType) : null;
-      return r.pricePerNight ?? rt?.basePrice ?? 0;
-    })
-    .filter((p) => p > 0);
-  const adr = prices.length > 0 ? prices.reduce((a, b) => a + b, 0) / prices.length : 0;
 
   const activeBookings = bookings.filter(
     (b) => b.status !== "cancelled" && b.status !== "no-show"
