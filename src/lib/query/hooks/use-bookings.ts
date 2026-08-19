@@ -47,7 +47,7 @@ export function useCreateBooking() {
   return useMutation({
     mutationFn: (payload: CreateBookingPayload) => bookingsApi.create(payload),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["bookings", "mine"] });
+      qc.invalidateQueries({ queryKey: bookingsKeys.mine() });
     },
   });
 }
@@ -59,7 +59,7 @@ export function useCreateBookingOnBehalf() {
     mutationFn: (payload: CreateBookingOnBehalfPayload) =>
       bookingsApi.createOnBehalf(payload),
     onSuccess: (_data, variables) => {
-      qc.invalidateQueries({ queryKey: ["bookings", "hotel", variables.hotelId] });
+      qc.invalidateQueries({ queryKey: bookingsKeys.hotel(variables.hotelId) });
     },
   });
 }
@@ -77,7 +77,7 @@ export function useUpdateBookingDetails() {
     }) => bookingsApi.updateDetails(bookingId, payload),
     onSuccess: (data, variables) => {
       qc.setQueryData(bookingsKeys.detail(variables.bookingId), data.booking);
-      qc.invalidateQueries({ queryKey: ["bookings", "mine"] });
+      qc.invalidateQueries({ queryKey: bookingsKeys.mine() });
       qc.invalidateQueries({ queryKey: ["bookings", "hotel"] });
     },
   });
@@ -96,7 +96,7 @@ export function useUpdateBookingStatus() {
     }) => bookingsApi.updateStatus(bookingId, status),
     onSuccess: (data, variables) => {
       qc.setQueryData(bookingsKeys.detail(variables.bookingId), data.booking);
-      qc.invalidateQueries({ queryKey: ["bookings", "mine"] });
+      qc.invalidateQueries({ queryKey: bookingsKeys.mine() });
       qc.invalidateQueries({ queryKey: ["bookings", "hotel"] });
     },
   });
@@ -109,7 +109,7 @@ export function useCancelBooking() {
     mutationFn: (bookingId: string) => bookingsApi.cancel(bookingId),
     onSuccess: (data, bookingId) => {
       qc.setQueryData(bookingsKeys.detail(bookingId), data.booking);
-      qc.invalidateQueries({ queryKey: ["bookings", "mine"] });
+      qc.invalidateQueries({ queryKey: bookingsKeys.mine() });
       qc.invalidateQueries({ queryKey: ["bookings", "hotel"] });
     },
   });
