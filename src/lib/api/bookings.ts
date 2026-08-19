@@ -40,14 +40,14 @@ export interface ListBookingsParams {
 export const bookingsApi = {
   // --- customer ---
   create: (payload: CreateBookingPayload) =>
-    apiFetch<BookingMutationResponse>("/api/booking", {
+    apiFetch<BookingMutationResponse>("/api/bookings", {
       method: "POST",
       body: payload,
     }),
 
   // --- staff/admin: on behalf of a customer ---
   createOnBehalf: (payload: CreateBookingOnBehalfPayload) =>
-    apiFetch<BookingMutationResponse>("/api/booking/hotel", {
+    apiFetch<BookingMutationResponse>("/api/bookings/hotel", {
       method: "POST",
       body: payload,
     }),
@@ -59,7 +59,7 @@ export const bookingsApi = {
     if (params.limit) q.set("limit", String(params.limit));
     if (params.status) q.set("status", params.status);
     const qs = q.toString();
-    return apiFetch<PaginatedBookings>(`/api/booking/my${qs ? `?${qs}` : ""}`);
+    return apiFetch<PaginatedBookings>(`/api/bookings/my${qs ? `?${qs}` : ""}`);
   },
   listForHotel: (hotelId: string, params: ListBookingsParams = {}) => {
     const q = new URLSearchParams();
@@ -68,24 +68,24 @@ export const bookingsApi = {
     if (params.status) q.set("status", params.status);
     const qs = q.toString();
     return apiFetch<PaginatedBookings>(
-      `/api/booking/hotel/${hotelId}${qs ? `?${qs}` : ""}`
+      `/api/bookings/hotel/${hotelId}${qs ? `?${qs}` : ""}`
     );
   },
-  get: (bookingId: string) => apiFetch<Booking>(`/api/booking/${bookingId}`),
+  get: (bookingId: string) => apiFetch<Booking>(`/api/bookings/${bookingId}`),
 
   // --- staff/admin mutations ---
   updateDetails: (bookingId: string, payload: UpdateBookingDetailsPayload) =>
-    apiFetch<BookingMutationResponse>(`/api/booking/${bookingId}`, {
+    apiFetch<BookingMutationResponse>(`/api/bookings/${bookingId}`, {
       method: "PATCH",
       body: payload,
     }),
   updateStatus: (bookingId: string, status: BookingStatus) =>
     apiFetch<BookingMutationResponse>(
-      `/api/booking/${bookingId}/status`,
+      `/api/bookings/${bookingId}/status`,
       { method: "PATCH", body: { status } }
     ),
   cancel: (bookingId: string) =>
-    apiFetch<BookingMutationResponse>(`/api/booking/${bookingId}/cancel`, {
+    apiFetch<BookingMutationResponse>(`/api/bookings/${bookingId}/cancel`, {
       method: "PATCH",
     }),
 };
