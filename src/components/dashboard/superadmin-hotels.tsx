@@ -95,19 +95,19 @@ function HotelRow({ hotel }: { hotel: Hotel }) {
       <TableCell>
         <span
           className={
-            hotel.isActive
+            !hotel.isDeleted
               ? "inline-flex items-center gap-1.5 text-xs text-success"
               : "inline-flex items-center gap-1.5 text-xs text-muted-foreground"
           }
         >
           <span
             className={
-              hotel.isActive
+              !hotel.isDeleted
                 ? "h-1.5 w-1.5 rounded-full bg-success"
                 : "h-1.5 w-1.5 rounded-full bg-muted-foreground"
             }
           />
-          {hotel.isActive ? "Active" : "Inactive"}
+          {!hotel.isDeleted ? "Active" : "Inactive"}
         </span>
       </TableCell>
       <TableCell className="text-xs text-muted-foreground">

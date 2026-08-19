@@ -19,7 +19,7 @@ import { Hotel as HotelIcon, Search, ChevronLeft, ChevronRight } from "lucide-re
  * and graceful loading/empty states.
  *
  * The backend's GET /api/hotels accepts page, limit, city, country,
- * isActive, sortBy, sortOrder — all wired here.
+ * isDeleted, sortBy, sortOrder — all wired here.
  */
 const PAGE_SIZE = 9;
 
@@ -35,7 +35,7 @@ export function HotelsBrowse() {
     limit: PAGE_SIZE,
     city: filters.city || undefined,
     country: filters.country || undefined,
-    isActive: true,
+    isDeleted: false,
     sortBy: "createdAt",
     sortOrder: "desc",
   });

@@ -37,7 +37,7 @@ import { Users, Save } from "lucide-react";
  *   /dashboard/staff/[id]       (mode="edit")
  *
  * Create: firstName, lastName, email, phoneNumber, password, role.
- * Edit: firstName, lastName, role, isActive (no password/email edit).
+ * Edit: firstName, lastName, role, isDeleted (no password/email edit).
  */
 export function StaffForm({
   mode,
@@ -77,7 +77,7 @@ export function StaffForm({
       firstName: "",
       lastName: "",
       role: "staff",
-      isActive: true,
+      isDeleted: false,
     },
   });
 
@@ -87,7 +87,7 @@ export function StaffForm({
         firstName: existing.firstName,
         lastName: existing.lastName,
         role: existing.role === "hotelAdmin" ? "hotelAdmin" : "staff",
-        isActive: !existing.isDeleted,
+        isDeleted: existing.isDeleted,
       });
     }
   }, [existing, mode, editForm]);
@@ -136,7 +136,7 @@ export function StaffForm({
           firstName: v.firstName,
           lastName: v.lastName,
           role: v.role,
-          isActive: v.isActive,
+          isDeleted: v.isDeleted,
         } as AdminUpdateUserPayload,
       });
       toast.success("Staff member updated.");
@@ -267,7 +267,7 @@ function EditForm({
   } = form;
   const router = useRouter();
   const role = watch("role") ?? "staff";
-  const isActive = watch("isActive") ?? true;
+  const isDeleted = watch("isDeleted") ?? false;
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8" noValidate>
@@ -303,11 +303,11 @@ function EditForm({
           </div>
           <div className="flex items-center gap-3 pt-6">
             <Checkbox
-              id="isActive"
-              checked={isActive}
-              onCheckedChange={(c) => setValue("isActive", c === true, { shouldDirty: true })}
+              id="isDeleted"
+              checked={!isDeleted}
+              onCheckedChange={(c) => setValue("isDeleted", c !== true, { shouldDirty: true })}
             />
-            <Label htmlFor="isActive" className="text-sm font-normal">
+            <Label htmlFor="isDeleted" className="text-sm font-normal">
               Active (can log in)
             </Label>
           </div>

@@ -169,19 +169,19 @@ function RoomTypeRow({
       <TableCell>
         <span
           className={
-            roomType.isActive
+            !roomType.isDeleted
               ? "inline-flex items-center gap-1.5 text-xs text-success"
               : "inline-flex items-center gap-1.5 text-xs text-muted-foreground"
           }
         >
           <span
             className={
-              roomType.isActive
+              !roomType.isDeleted
                 ? "h-1.5 w-1.5 rounded-full bg-success"
                 : "h-1.5 w-1.5 rounded-full bg-muted-foreground"
             }
           />
-          {roomType.isActive ? "Active" : "Inactive"}
+          {!roomType.isDeleted ? "Active" : "Inactive"}
         </span>
       </TableCell>
       <TableCell className="text-right">

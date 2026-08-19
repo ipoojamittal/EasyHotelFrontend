@@ -17,7 +17,7 @@ import { Hotel as HotelIcon } from "lucide-react";
 export function FeaturedHotels() {
   const { data, isLoading, isError } = useHotels({
     limit: 6,
-    isActive: true,
+    isDeleted: false,
     sortBy: "createdAt",
     sortOrder: "desc",
   });

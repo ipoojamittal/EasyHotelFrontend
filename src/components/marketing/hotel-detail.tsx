@@ -23,7 +23,7 @@ import { MapPin, Clock, Phone, Mail, CheckCircle2, BedDouble } from "lucide-reac
 export function HotelDetail({ hotelId }: { hotelId: string }) {
   const { data: hotel, isLoading: hotelLoading, isError: hotelError } = useHotel(hotelId);
   const { data: rooms, isLoading: roomsLoading } = useRooms(hotelId, {
-    isActive: true,
+    isDeleted: false,
   });
 
   if (hotelError) {

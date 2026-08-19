@@ -41,7 +41,7 @@ import { BedDouble, Save } from "lucide-react";
  *
  * Fields: name, typeCode, basePrice, defaultCapacity, maxCapacity,
  * amenities, images, bedConfiguration, viewType, size{value,unit},
- * tags, sortOrder, isActive.
+ * tags, sortOrder, isDeleted.
  */
 export function RoomTypeForm({
   mode,
@@ -235,11 +235,11 @@ export function RoomTypeForm({
           </Field>
           <div className="flex items-center gap-3 pt-6">
             <Checkbox
-              id="isActive"
-              checked={watch("isActive")}
-              onCheckedChange={(c) => setValue("isActive", c === true, { shouldDirty: true })}
+              id="isDeleted"
+              checked={!watch("isDeleted")}
+              onCheckedChange={(c) => setValue("isDeleted", c !== true, { shouldDirty: true })}
             />
-            <Label htmlFor="isActive" className="text-sm font-normal">
+            <Label htmlFor="isDeleted" className="text-sm font-normal">
               Active (visible to guests)
             </Label>
           </div>
@@ -275,7 +275,7 @@ function defaultValues(): RoomTypeValues {
     sizeValue: "",
     sizeUnit: "sqm",
     sortOrder: "",
-    isActive: true,
+    isDeleted: false,
     amenities: [],
     images: [],
     tags: [],
@@ -295,7 +295,7 @@ function roomTypeToValues(rt: RoomType): RoomTypeValues {
     sizeValue: rt.size?.value ? String(rt.size.value) : "",
     sizeUnit: rt.size?.unit ?? "sqm",
     sortOrder: rt.sortOrder != null ? String(rt.sortOrder) : "",
-    isActive: rt.isActive ?? true,
+    isDeleted: rt.isDeleted ?? false,
     amenities: rt.amenities ?? [],
     images: rt.images ?? [],
     tags: rt.tags ?? [],
@@ -324,7 +324,7 @@ function valuesToCreatePayload(v: RoomTypeValues): CreateRoomTypePayload {
 }
 
 function valuesToUpdatePayload(v: RoomTypeValues): UpdateRoomTypePayload {
-  return { ...valuesToCreatePayload(v), isActive: v.isActive };
+  return { ...valuesToCreatePayload(v), isDeleted: v.isDeleted };
 }
 
 /* --- shared sub-components (duplicated from hotel-form for independence) --- */
